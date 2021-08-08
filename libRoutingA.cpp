@@ -1,4 +1,4 @@
-#include "RoutingA.hpp"
+#include "libRoutingA.hpp"
 
 #include <QDebug>
 #include <QStack>
@@ -16,13 +16,13 @@ namespace RoutingA
         for (const auto &token : rasyms)
         {
             if (token.children.length() != 1)
-                Q_UNREACHABLE();
+                throw ParsingErrorException(QObject::tr("Unexpected empty tree."), 0, token.value);
             else if (const auto sym = token.children.first().sym; sym == _details::RA_Symbol::_B)
                 defines << ParseDefination(token.children[0]);
             else if (sym == _details::RA_Symbol::_C)
                 routings << ParseRouting(token.children[0]);
             else
-                Q_UNREACHABLE();
+                throw ParsingErrorException(QObject::tr("Unexpected node symbol."), 0, token.value);
         }
 
         return { defines, routings };
@@ -102,8 +102,7 @@ namespace RoutingA::_details
                 return;
             }
         }
-
-        Q_UNREACHABLE();
+        throw ParsingErrorException(QObject::tr("Unexpected special case unmatched."), 0, u""_qs);
     }
 
     RA_Token GenerateSyntaxTree(const QString &prog)
@@ -114,6 +113,20 @@ namespace RoutingA::_details
         states.push(0);
 
         const auto program = Preprocess(prog) + char_header_map.key(stackR.top().sym);
+
+        const auto getLine = [&](int i)
+        {
+            auto lineStartPos = program.lastIndexOf('\n', i);
+            auto lineEndPos = program.indexOf('\n', i);
+
+            if (lineStartPos == -1)
+                lineStartPos = 0;
+
+            if (lineEndPos == -1)
+                lineEndPos = program.length();
+
+            return program.sliced(lineStartPos, lineEndPos - lineStartPos);
+        };
 
         QList<RA_Token> reducedSyms;
         for (auto i = 0; i < program.length();)
@@ -169,22 +182,14 @@ namespace RoutingA::_details
                 }
                 case RA_Action::Nul:
                 {
-                    auto lineStartPos = program.lastIndexOf('\n', i);
-                    auto lineEndPos = program.indexOf('\n', i);
+                    const auto line = getLine(i);
+                    if (i == program.length() - 1)
+                        throw ParsingErrorException("Unexpected EOF", i, line);
 
-                    if (lineStartPos == -1)
-                        lineStartPos = 0;
-
-                    if (lineEndPos == -1)
-                        lineEndPos = program.length();
-
-                    const auto line = program.sliced(lineStartPos, lineEndPos - lineStartPos);
-
-                    qCritical() << "Error parsing line:";
-                    qCritical().noquote().nospace() << line << '\n' << u" "_qs.repeated(i - lineStartPos - 1) << "^ unexpected char here.";
-                    exit(1);
+                    const auto lineStartPos = program.lastIndexOf('\n', i);
+                    throw ParsingErrorException(line + '\n' + u" "_qs.repeated(i - lineStartPos - 1) + "^ unexpected char here.", i, line);
                 }
-                default: Q_UNREACHABLE();
+                default: throw ParsingErrorException(u"Unreachable condition reached."_qs, i, getLine(i));
             }
         }
 

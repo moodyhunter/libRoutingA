@@ -15,9 +15,9 @@ set(CMAKE_AUTORCC ON)
 
 add_executable(libRoutingA
     main.cpp
-    RoutingA.hpp
-    RoutingA.cpp
-    RoutingA-ActionTable.cpp
+    libRoutingA.hpp
+    libRoutingA.cpp
+    libRoutingA-ActionTable.cpp
     )
 
 target_compile_definitions(libRoutingA PRIVATE QT_DISABLE_DEPRECATED_BEFORE=0x060200)

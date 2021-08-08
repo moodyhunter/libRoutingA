@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QException>
 #include <QList>
 #include <QMap>
 #include <QMetaType>
@@ -31,6 +32,15 @@ namespace RoutingA
     {
         QList<Function> rules;
         QString outboundTag;
+    };
+
+    class ParsingErrorException
+    {
+      public:
+        ParsingErrorException(const QString &s, int pos, const QString &line) : Message(s.trimmed()), Position(pos), Line(line.trimmed()){};
+        QString Message;
+        int Position;
+        QString Line;
     };
 
     QPair<QList<Defination>, QList<Routing>> ParseRoutingA(const QString &program);
