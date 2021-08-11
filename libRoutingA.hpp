@@ -15,17 +15,17 @@ namespace RoutingA
         QMap<QString, QStringList> namedParams;
     };
 
-    struct IOBound
+    struct DefinationContent
     {
         QString name;
-        Function Value;
+        Function function;
     };
 
     struct Defination
     {
-        QString Name;
+        QString type;
         QString value;
-        IOBound bound;
+        DefinationContent content;
     };
 
     struct Routing
@@ -117,12 +117,12 @@ namespace RoutingA
         QList<RA_Token> ParseS(const RA_Token &s);
 
         Function ParseFunction(const RA_Token &t);
-        IOBound ParseIOBound(const RA_Token &t);
+        DefinationContent ParseIOBound(const RA_Token &t);
         Defination ParseDefination(const RA_Token &t);
         Routing ParseRouting(const RA_Token &t);
     } // namespace _details
 } // namespace RoutingA
 
 Q_DECLARE_METATYPE(RoutingA::Defination)
-Q_DECLARE_METATYPE(RoutingA::IOBound)
+Q_DECLARE_METATYPE(RoutingA::DefinationContent)
 Q_DECLARE_METATYPE(RoutingA::Function)

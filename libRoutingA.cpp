@@ -229,23 +229,23 @@ namespace RoutingA::_details
 
         const auto E = t.children[2];
         Defination d;
-        d.Name = t.children[0].value;
+        d.type = t.children[0].value;
 
         if (SymbolMatches(E.children, { RA_Symbol::_D, RA_Symbol::equalsign, RA_Symbol::_F }))
-            d.bound = ParseIOBound(E);
+            d.content = ParseIOBound(E);
         else if (SymbolMatches(E.children, { RA_Symbol::_D }))
             d.value = E.children[0].value;
 
         return d;
     }
 
-    IOBound ParseIOBound(const RA_Token &t)
+    DefinationContent ParseIOBound(const RA_Token &t)
     {
         if (t.sym != RA_Symbol::_E || !SymbolMatches(t.children, { RA_Symbol::_D, RA_Symbol::equalsign, RA_Symbol::_F }))
             return {};
-        IOBound b;
+        DefinationContent b;
         b.name = t.children[0].value.trimmed();
-        b.Value = ParseFunction(t.children[2]);
+        b.function = ParseFunction(t.children[2]);
         return b;
     }
 

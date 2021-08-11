@@ -1,7 +1,11 @@
 #pragma once
 
-constexpr auto example_data = R"(# customize inbound. we support http, socks
+constexpr auto example_data = R"(
+# customize inbound. we support http, socks
 # 自定义入站 inbound，支持http, socks
+
+stream:streamA=ws(test1, test2, test5, path: "/")
+
 inbound:httpauthin=http(address: 0.0.0.0, port: 1081, user: user1, pass: user1pass, user:user2, pass:user2pass)
 inbound:socksauthin=socks(address: 0.0.0.0, port: 1082, user: 123, pass: 123)
 inbound:sockslocalin=socks(address: 127.0.0.1, port: 1080)
