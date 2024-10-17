@@ -21,7 +21,7 @@ namespace RoutingA
         Function function;
     };
 
-    struct Defination
+    struct Definition
     {
         QString type;
         QString value;
@@ -37,13 +37,13 @@ namespace RoutingA
     class ParsingErrorException
     {
       public:
-        ParsingErrorException(const QString &s, int pos, const QString &line) : Message(s.trimmed()), Position(pos), Line(line.trimmed()){};
+        ParsingErrorException(const QString &s, int pos, const QString &line) : Message(s.trimmed()), Position(pos), Line(line.trimmed()) {};
         QString Message;
         int Position;
         QString Line;
     };
 
-    QPair<QList<Defination>, QList<Routing>> ParseRoutingA(const QString &program);
+    QPair<QList<Definition>, QList<Routing>> ParseRoutingA(const QString &program);
 
     namespace _details
     {
@@ -67,8 +67,8 @@ namespace RoutingA
                 // clang-format on
             };
 
-            constexpr RA_Action(int v) : actionType(Nul), state(v){};
-            constexpr RA_Action(atype t = Nul, int v = 0) : actionType(t), state(v){};
+            constexpr RA_Action(int v) : actionType(Nul), state(v) {};
+            constexpr RA_Action(atype t = Nul, int v = 0) : actionType(t), state(v) {};
 
             atype actionType;
             int state;
@@ -86,8 +86,8 @@ namespace RoutingA
             QList<RA_Token> children;
             QString value;
 
-            RA_Token(){};
-            RA_Token(RA_Symbol h, const QString &v, const QList<RA_Token> &c = {}) : sym(h), children(c), value(v){};
+            RA_Token() {};
+            RA_Token(RA_Symbol h, const QString &v, const QList<RA_Token> &c = {}) : sym(h), children(c), value(v) {};
 
             RA_Token sliced(int from) const
             {
@@ -118,11 +118,11 @@ namespace RoutingA
 
         Function ParseFunction(const RA_Token &t);
         DefinationContent ParseIOBound(const RA_Token &t);
-        Defination ParseDefination(const RA_Token &t);
+        Definition ParseDefination(const RA_Token &t);
         Routing ParseRouting(const RA_Token &t);
     } // namespace _details
 } // namespace RoutingA
 
-Q_DECLARE_METATYPE(RoutingA::Defination)
+Q_DECLARE_METATYPE(RoutingA::Definition)
 Q_DECLARE_METATYPE(RoutingA::DefinationContent)
 Q_DECLARE_METATYPE(RoutingA::Function)

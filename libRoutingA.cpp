@@ -4,14 +4,16 @@
 #include <QObject>
 #include <QStack>
 
+using namespace Qt::StringLiterals;
+
 namespace RoutingA
 {
-    QPair<QList<Defination>, QList<Routing>> ParseRoutingA(const QString &program)
+    QPair<QList<Definition>, QList<Routing>> ParseRoutingA(const QString &program)
     {
         const auto syms = _details::GenerateSyntaxTree(program);
         const auto rasyms = _details::ParseS(syms);
 
-        QList<Defination> defines;
+        QList<Definition> defines;
         QList<Routing> routings;
 
         for (const auto &token : rasyms)
@@ -108,7 +110,7 @@ namespace RoutingA::_details
                 return;
             }
         }
-        throw ParsingErrorException(QObject::tr("Unexpected special case unmatched."), 0, u""_qs);
+        throw ParsingErrorException(QObject::tr("Unexpected special case unmatched."), 0, u""_s);
     }
 
     RA_Token GenerateSyntaxTree(const QString &prog)
@@ -193,9 +195,9 @@ namespace RoutingA::_details
                         throw ParsingErrorException("Unexpected EOF", i, line);
 
                     const auto lineStartPos = program.lastIndexOf('\n', i);
-                    throw ParsingErrorException(line + '\n' + u" "_qs.repeated(i - lineStartPos - 1) + "^ unexpected char here.", i, line);
+                    throw ParsingErrorException(line + '\n' + u" "_s.repeated(i - lineStartPos - 1) + "^ unexpected char here.", i, line);
                 }
-                default: throw ParsingErrorException(u"Unreachable condition reached."_qs, i, getLine(i));
+                default: throw ParsingErrorException(u"Unreachable condition reached."_s, i, getLine(i));
             }
         }
 
@@ -228,13 +230,13 @@ namespace RoutingA::_details
         return functions;
     }
 
-    Defination ParseDefination(const RA_Token &t)
+    Definition ParseDefination(const RA_Token &t)
     {
         if (t.sym != RA_Symbol::_B || !SymbolMatches(t.children, { RA_Symbol::_D, RA_Symbol::colon, RA_Symbol::_E }))
             return {};
 
         const auto E = t.children[2];
-        Defination d;
+        Definition d;
         d.type = t.children[0].value;
 
         if (SymbolMatches(E.children, { RA_Symbol::_D, RA_Symbol::equalsign, RA_Symbol::_F }))
